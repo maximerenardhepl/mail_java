@@ -7,27 +7,28 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import com.formdev.flatlaf.FlatDarculaLaf;
 
-public class box extends JFrame{
+public class nouveau_mail extends JFrame{
     private JTextField destT;
-    private JTextField textT;
+    private JTextArea textT;
     private JLabel text;
     private JLabel destination;
     private JButton envoyer;
     private JTextField objT;
     private JLabel object;
     private JPanel mainpanel;
-    private JButton mesMailsButton;
+    private JButton pieceJointeButton;
+    private JRadioButton maxRadioButton;
+    private JRadioButton noaRadioButton;
     private JButton piece_jointe;
 
     //consrtrcuteur de box
-    public box()
+    public nouveau_mail()
     {
         FlatDarculaLaf.setup();
         setLocation(250, 150);
 
         setSize(400,400);
         setContentPane(mainpanel);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
         envoyer.addActionListener(new ActionListener()
         {
@@ -47,20 +48,23 @@ public class box extends JFrame{
             }
         });
 
-        mesMailsButton.addActionListener(new ActionListener() {
+        pieceJointeButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                consult fen = new consult();
-                fen.setVisible(true);
+                control.getInstance().PieceJointe();
             }
         });
 
-        piece_jointe.addActionListener(new ActionListener() {
+        maxRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                piece_jointe fen = new piece_jointe();
-                fen.setVisible(true);
-
+                control.getInstance().password = "ztnjudjfqvapunwo";
+            }
+        });
+        noaRadioButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                control.getInstance().password = "ztnjudjfqvapunwo";
             }
         });
     }

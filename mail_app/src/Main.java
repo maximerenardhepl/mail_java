@@ -1,14 +1,13 @@
 
 import com.formdev.flatlaf.FlatDarculaLaf;
 import controleur.control;
-import mail_interface.box;
+import mail_interface.principale;
+
 public class Main {
     public static void main(String[] args) {
-        //control.getInstance().trouverMTA();
-
         FlatDarculaLaf.setup();
         //instancie la fenetre principale appeller box
-        box fenetrePrincipale = new box();
+        principale fenetrePrincipale = new principale();
         fenetrePrincipale.setVisible(true);
     }
 }

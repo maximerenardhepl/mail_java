@@ -7,6 +7,7 @@ import javax.mail.internet.*;
 import javax.sql.DataSource;
 import javax.swing.*;
 import java.util.*;
+import javax.swing.JFileChooser;
 
 public class control {
 
@@ -21,17 +22,21 @@ public class control {
         return instance;
     }
 
-    public String texte;
-    public String destinataire;
-    public String objet;
+    public String password;
+
     public String piece_path="";
+    public Message[] TabMess = new Message[50];
 
     DefaultListModel<String> listModel = new DefaultListModel<>();
+
+    public String GetPassword()
+    {
+        return piece_path;
+    }
 
     public void send(String username, String subject, String text) {
         // Paramètres SMTP du serveur de messagerie
         String host = "smtp.gmail.com"; // Adresse du serveur SMTP
-        String password = "ztnjudjfqvapunwo"; // Mot de passe SMTP
 
         // Propriétés SMTP
         Properties props = new Properties();
@@ -44,7 +49,7 @@ public class control {
         Session session = javax.mail.Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, password);
+                return new PasswordAuthentication(username, GetPassword());
             }
         });
 
@@ -86,7 +91,6 @@ public class control {
         }
     }
 
-
     public void recieve(JList list1) {
         // Paramètres IMAP du serveur de messagerie
         String host = "smtp.gmail.com";
@@ -111,7 +115,7 @@ public class control {
             int totalMessages = inbox.getMessageCount();
 
             // Déterminez la plage de messages que vous souhaitez récupérer (les 50 derniers)
-            int start = Math.max(1, totalMessages - 49); // 1-based index
+            int start = Math.max(1, totalMessages - 50); // 1-based index
             int end = totalMessages;
 
             // Obtenez la liste des messages dans la plage spécifiée
@@ -119,8 +123,8 @@ public class control {
 
             int n=1;
             // Parcourez les messages et affichez-les
-            for (int i = 0; i < messages.length; i++) {
-
+            for (int i = 49; i >= 0; i--) {
+                TabMess[i] = messages[i];
                 Message message = messages[i];
                 String subject = message.getSubject();
                 String sender = message.getFrom()[0].toString();
@@ -140,6 +144,22 @@ public class control {
 
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void PieceJointe()
+    {
+        JFileChooser fileChooser = new JFileChooser();
+
+        // Affiche la boîte de dialogue de sélection de fichier
+        int returnValue = fileChooser.showOpenDialog(null);
+
+        if (returnValue == JFileChooser.APPROVE_OPTION) {
+            // Récupère le chemin d'accès au fichier sélectionné
+            piece_path = fileChooser.getSelectedFile().getAbsolutePath();
+            System.out.println("Chemin d'accès au fichier sélectionné : " + piece_path);
+        } else {
+            System.out.println("Aucun fichier sélectionné.");
         }
     }
 
@@ -167,7 +187,7 @@ public class control {
             int n=1;
             for (Message message : messages) {
                 String sujet = "N: " + n + "  Sujet : " + message.getSubject();
-                listModel.addElement(sujet);
+                listModel. addElement(sujet);
 
                 Enumeration<Header> headers = message.getAllHeaders();
                 while (headers.hasMoreElements()) {
