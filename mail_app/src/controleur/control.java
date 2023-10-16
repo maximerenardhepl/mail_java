@@ -1,10 +1,11 @@
 package controleur;
 
+import mail_interface.principale;
+
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.sql.DataSource;
 import javax.swing.*;
 import java.util.*;
 import javax.swing.JFileChooser;
@@ -14,7 +15,8 @@ public class control {
     private static control instance = new control();
     //le constructeur ne seras instancier que une seul fois comme c'est un sigleton
     private control() {
-
+        listMsg = new ArrayList<>();
+        nbrMessagesInBox = -1;
     }
 
     // Méthode statique pour récupérer l'instance unique
@@ -22,10 +24,11 @@ public class control {
         return instance;
     }
 
+    private principale refMainView;
     public String password;
-
     public String piece_path="";
-    public Message[] TabMess = new Message[50];
+    private ArrayList<Message> listMsg;
+    private int nbrMessagesInBox;
 
     DefaultListModel<String> listModel = new DefaultListModel<>();
 
@@ -33,6 +36,14 @@ public class control {
     {
         return piece_path;
     }
+
+    public int getMessageCount() { return this.nbrMessagesInBox; }
+
+    public void setRefView(principale fenetrePrincipale) { this.refMainView = fenetrePrincipale; }
+
+    public principale getRefMainView() { return refMainView; }
+
+    public ArrayList<Message> getListMsg() { return listMsg; }
 
     public void send(String username, String subject, String text) {
         // Paramètres SMTP du serveur de messagerie
@@ -91,7 +102,7 @@ public class control {
         }
     }
 
-    public void recieve(JList list1) {
+    public synchronized ArrayList<Message> receive() {
         // Paramètres IMAP du serveur de messagerie
         String host = "smtp.gmail.com";
         String username = "maximerenardhepl@gmail.com";
@@ -114,8 +125,16 @@ public class control {
             // Obtenez le nombre total de messages
             int totalMessages = inbox.getMessageCount();
 
+            /*int nbrNouveauxMsg = 0;
+            if(nbrMessagesInBox != -1) {
+                if(totalMessages > nbrMessagesInBox) { //si il y a un nouveau message dans la boite...
+                    nbrNouveauxMsg = totalMessages - nbrMessagesInBox;
+                }
+            }
+            nbrMessagesInBox = totalMessages;*/
+
             // Déterminez la plage de messages que vous souhaitez récupérer (les 50 derniers)
-            int start = Math.max(1, totalMessages - 50); // 1-based index
+            int start = Math.max(1, totalMessages - 50);
             int end = totalMessages;
 
             // Obtenez la liste des messages dans la plage spécifiée
@@ -123,15 +142,16 @@ public class control {
 
             int n=1;
             // Parcourez les messages et affichez-les
-            for (int i = 49; i >= 0; i--) {
-                TabMess[i] = messages[i];
-                Message message = messages[i];
-                String subject = message.getSubject();
-                String sender = message.getFrom()[0].toString();
+            listMsg = new ArrayList<>();
+            for (Message msg : messages) {
+                listMsg.add(msg);
+
+                //String subject = msg.getSubject();
+                //String sender = msg.getFrom()[0].toString();
 
                 // Ajoutez le sujet et l'expéditeur au modèle de liste
-                listModel.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
-                listModel.addElement("=============================================================================================================");
+                //listModel.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
+                //listModel.addElement("=============================================================================================================");
                 n++;
             }
 
@@ -140,11 +160,12 @@ public class control {
             store.close();
 
             // Mettez à jour la JList avec le modèle de liste
-            list1.setModel(listModel);
+            //list1.setModel(listModel);
 
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return listMsg;
     }
 
     public void PieceJointe()
