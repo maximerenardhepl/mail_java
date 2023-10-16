@@ -70,8 +70,8 @@ public class control {
             Message message = new MimeMessage(session);
 
             // Définissez l'expéditeur, le destinataire, le sujet et le corps du message
-            //message.setFrom(new InternetAddress("noa.lallemand.testMail@gmail.com"));
-            message.setFrom(new InternetAddress("maximerenardhepl@gmail.com"));
+            message.setFrom(new InternetAddress("noa.lallemand.testMail@gmail.com"));
+            //message.setFrom(new InternetAddress("maximerenardhepl@gmail.com"));
             message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(username));
 
             // Définissez le sujet et le contenu du message
@@ -108,17 +108,16 @@ public class control {
         // Paramètres IMAP du serveur de messagerie
         String host = "imap.gmail.com";
 
-        String username = "maximerenardhepl@gmail.com";
-        String password = "ztnjudjfqvapunwo";
+        //String username = "maximerenardhepl@gmail.com";
+        //String password = "ztnjudjfqvapunwo";
 
-        //String username = "noa.lallemand.testMail@gmail.com";
-        //String password = "rvvoapvidjolgcmj";
+        String username = "noa.lallemand.testMail@gmail.com";
+        String password = "rvvoapvidjolgcmj";
 
         Properties props = new Properties();
         props.setProperty("mail.store.protocol", "imaps");
         props.setProperty("mail.imaps.host", host);
 
-        ArrayList<MessageData> listeNouveauxMsg = new ArrayList<>();
         try {
             // Crée une session de messagerie avec authentification
             Session session = Session.getDefaultInstance(props, null);
@@ -137,50 +136,26 @@ public class control {
                     nbrNouveauxMsg = totalMessages - nbrMessagesInBox;
                 }
             }
-            nbrMessagesInBox = totalMessages;
 
-            int start, end;
+            int start = 0, end = 0;
+            boolean areUpdates = false;
             if(nbrNouveauxMsg != 0) {
-                start = Math.max(1, totalMessages - nbrNouveauxMsg);
+                System.out.println("Nouveau(x) message(s) détecté(s): " + nbrNouveauxMsg);
+                start = Math.max(1, totalMessages - (nbrNouveauxMsg-1));
                 end = totalMessages;
-
-                // Obtient la liste des messages dans la plage spécifiée
-                Message[] messages = inbox.getMessages(start, end);
-
-                MessageData nouveauMsg;
-                for (Message msg : messages) {
-
-                    String expediteur = msg.getFrom()[0].toString();
-                    String sujet = msg.getSubject();
-
-                    nouveauMsg = new MessageData();
-                    nouveauMsg.setSession(session);
-                    nouveauMsg.setExpediteur(expediteur);
-                    nouveauMsg.setSujet(sujet);
-
-                    System.out.println("-------------------------------");
-                    System.out.println("Nouveau Message: \n" + "Expéditeur: " + nouveauMsg.getExpediteur() + "Sujet: " + nouveauMsg.getSujet());
-
-                    if(msg.isMimeType("text/plain")) {
-                        System.out.println("Ce message est un simple message (text/plain)...");
-
-                        nouveauMsg.setContenu((String) msg.getContent());
-                    }
-                    else if(msg.isMimeType("multipart/*")) {
-
-                    }
-
-                    listeNouveauxMsg.add(0, nouveauMsg);
-
-                    int tailleListe = listeNouveauxMsg.size();
-                    listeNouveauxMsg.remove(tailleListe-1);
-                }
+                areUpdates = true;
             }
             else {
-                // Détermine la plage de messages qu'on souhaite récupérer (les 50 derniers)
-                start = Math.max(1, totalMessages - 50);
-                end = totalMessages;
+                if(nbrMessagesInBox == -1) { //Si on a pas encore lu une seule fois les mails...
 
+                    // Détermine la plage de messages qu'on souhaite récupérer (les 50 derniers)
+                    start = Math.max(1, totalMessages - 50);
+                    end = totalMessages;
+                    areUpdates = true;
+                }
+            }
+
+            if(areUpdates) {
                 // Obtient la liste des messages dans la plage spécifiée
                 Message[] messages = inbox.getMessages(start, end);
 
@@ -207,23 +182,24 @@ public class control {
 
                     }
 
-                    listeNouveauxMsg.add(nouveauMsg);
+                    listMsg.add(nouveauMsg);
+                }
+
+                while(listMsg.size() >= 50) {
+                    listMsg.remove(listMsg.size() - 1);
                 }
             }
+            nbrMessagesInBox = totalMessages;
 
             // Fermez le dossier de la boîte de réception et la connexion
             inbox.close(false);
             store.close();
 
-            // Mettez à jour la JList avec le modèle de liste
-            //list1.setModel(listModel);
-
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        listMsg = listeNouveauxMsg;
-        return listeNouveauxMsg;
+        return listMsg;
     }
 
     public void PieceJointe()
@@ -246,11 +222,11 @@ public class control {
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
         String host = "smtp.gmail.com";
-        String username = "maximerenardhepl@gmail.com";
-        String password = "ztnjudjfqvapunwo";
+        //String username = "maximerenardhepl@gmail.com";
+        //String password = "ztnjudjfqvapunwo";
 
-        //String username = "noa.lallemand.testMail@gmail.com";
-        //String password = "rvvoapvidjolgcmj";
+        String username = "noa.lallemand.testMail@gmail.com";
+        String password = "rvvoapvidjolgcmj";
 
         Properties props = new Properties();
         props.put("mail.store.protocol", "imaps");

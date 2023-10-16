@@ -8,6 +8,8 @@ import javax.mail.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.util.ArrayList;
 import java.util.Properties;
 
@@ -19,21 +21,40 @@ public class principale extends JFrame{
 
     public JList getJList() { return list1; }
 
-    public principale(){
+    public principale() {
         FlatDarculaLaf.setup();
         setLocation(250, 150);
 
         setSize(900,600);
         setContentPane(principale);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ArrayList<MessageData> listMsg = control.getInstance().receive();
-        actualiseListeMails(listMsg);
+
+        //ArrayList<MessageData> listMsg = control.getInstance().receive();
+        //actualiseListeMails(listMsg);
 
         nouveauMailButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
                 nouveau_mail fen = new nouveau_mail();
                 fen.setVisible(true);
+            }
+        });
+
+        list1.addMouseListener(new MouseAdapter() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                if (e.getClickCount() == 2) { // Réagit au double clic
+                    int selectedIndex = list1.getSelectedIndex();
+                    if (selectedIndex != -1) {
+                        //String selectedItem = (String)(list1.getModel().getElementAt(selectedIndex));
+                        ArrayList<MessageData> listMsg = control.getInstance().getListMsg();
+                        int tailleListe = listMsg.size();
+                        MessageData mail = listMsg.get((tailleListe-1)-selectedIndex);
+
+                        DisplayMail fenDisplayMail = new DisplayMail(mail);
+                        fenDisplayMail.setVisible(true);
+                    }
+                }
             }
         });
     }
@@ -47,7 +68,7 @@ public class principale extends JFrame{
             String subject = msg.getSujet();
 
             model.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
-            model.addElement("=============================================================================================================");
+            //model.addElement("=============================================================================================================");
         }
 
         list1.setModel(model);
