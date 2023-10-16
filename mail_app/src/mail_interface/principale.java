@@ -1,5 +1,6 @@
 package mail_interface;
 
+import Modele.MessageData;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import controleur.control;
 
@@ -25,7 +26,7 @@ public class principale extends JFrame{
         setSize(900,600);
         setContentPane(principale);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        ArrayList<Message> listMsg = control.getInstance().receive();
+        ArrayList<MessageData> listMsg = control.getInstance().receive();
         actualiseListeMails(listMsg);
 
         nouveauMailButton.addActionListener(new ActionListener() {
@@ -37,23 +38,18 @@ public class principale extends JFrame{
         });
     }
 
-    public void actualiseListeMails(ArrayList<Message> listMsg) {
+    public void actualiseListeMails(ArrayList<MessageData> listMsg) {
         DefaultListModel<String> model = new DefaultListModel<>();
 
-        try {
-            for(int i = (listMsg.size()-1), n = 1; i >= 0; i--, n++) {
-                Message msg = listMsg.get(i);
-                String sender = msg.getFrom()[0].toString();
-                String subject = msg.getSubject();
+        for(int i = (listMsg.size()-1), n = 1; i >= 0; i--, n++) {
+            MessageData msg = listMsg.get(i);
+            String sender = msg.getExpediteur();
+            String subject = msg.getSujet();
 
-                model.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
-                model.addElement("=============================================================================================================");
-            }
+            model.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
+            model.addElement("=============================================================================================================");
+        }
 
-            list1.setModel(model);
-        }
-        catch(MessagingException e) {
-            e.printStackTrace();
-        }
+        list1.setModel(model);
     }
 }

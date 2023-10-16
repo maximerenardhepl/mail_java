@@ -64,7 +64,7 @@ public class nouveau_mail extends JFrame{
         noaRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                control.getInstance().password = "ztnjudjfqvapunwo";
+                control.getInstance().password = "rvvoapvidjolgcmj";
             }
         });
     }
