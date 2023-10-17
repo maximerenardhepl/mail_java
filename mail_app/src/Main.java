@@ -1,8 +1,7 @@
-
+import Thread.ThreadReceptionMail;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import controleur.control;
 import mail_interface.principale;
-import Thread.ThreadReceptionMail;
 
 import javax.swing.*;
 

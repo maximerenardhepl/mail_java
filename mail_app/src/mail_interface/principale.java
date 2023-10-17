@@ -4,20 +4,19 @@ import Modele.MessageData;
 import com.formdev.flatlaf.FlatDarculaLaf;
 import controleur.control;
 
-import javax.mail.*;
 import javax.swing.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.util.ArrayList;
-import java.util.Properties;
 
 public class principale extends JFrame{
     private JPanel principale;
     private JList list1;
     private JButton suivreLogButton;
     private JButton nouveauMailButton;
+    private JButton MTAButton;
 
     public JList getJList() { return list1; }
 
@@ -57,6 +56,14 @@ public class principale extends JFrame{
                 }
             }
         });
+
+        MTAButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                trace fen = new trace();
+                fen.setVisible(true);
+            }
+        });
     }
 
     public void actualiseListeMails(ArrayList<MessageData> listMsg) {
@@ -68,7 +75,7 @@ public class principale extends JFrame{
             String subject = msg.getSujet();
 
             model.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
-            //model.addElement("=============================================================================================================");
+            model.addElement("=============================================================================================================");
         }
 
         list1.setModel(model);

@@ -36,6 +36,12 @@ public class nouveau_mail extends JFrame{
             public void actionPerformed(ActionEvent e)
             {
                 String dest = destT.getText();
+                /*if(dest == "maximerenardhepl@gmail.com") {
+
+                }
+                else {
+
+                }*/
                 String objet = objT.getText();
                 String texte = textT.getText();
 
@@ -58,13 +64,17 @@ public class nouveau_mail extends JFrame{
         maxRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                control.getInstance().password = "ztnjudjfqvapunwo";
+                control ref = control.getInstance();
+                ref.setUsernameExp("maximerenardhepl@gmail.com");
+                ref.setPassword("ztnjudjfqvapunwo");
             }
         });
         noaRadioButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                control.getInstance().password = "rvvoapvidjolgcmj";
+                control ref = control.getInstance();
+                ref.setUsernameExp("noa.lallemand.testMail@gmail.com");
+                ref.setPassword("rvvoapvidjolgcmj");
             }
         });
     }

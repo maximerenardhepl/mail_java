@@ -26,16 +26,26 @@ public class control {
     }
 
     private principale refMainView;
-    public String password;
+    private String usernameExp;
+    private String password;
     public String piece_path="";
     private ArrayList<MessageData> listMsg;
     private int nbrMessagesInBox;
 
+
     DefaultListModel<String> listModel = new DefaultListModel<>();
 
-    public String GetPassword()
+    public String getPassword()
     {
         return password;
+    }
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getUsernameExp() { return usernameExp; }
+    public void setUsernameExp(String username) {
+        this.usernameExp = username;
     }
 
     public int getMessageCount() { return this.nbrMessagesInBox; }
@@ -46,7 +56,7 @@ public class control {
 
     public ArrayList<MessageData> getListMsg() { return listMsg; }
 
-    public void send(String username, String subject, String text) {
+    public void send(String usernameDest, String subject, String text) {
         // Paramètres SMTP du serveur de messagerie
         String host = "smtp.gmail.com"; // Adresse du serveur SMTP
 
@@ -61,7 +71,7 @@ public class control {
         Session session = javax.mail.Session.getInstance(props, new Authenticator() {
             @Override
             protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(username, GetPassword());
+                return new PasswordAuthentication(getUsernameExp(), getPassword());
             }
         });
 
@@ -70,9 +80,9 @@ public class control {
             Message message = new MimeMessage(session);
 
             // Définissez l'expéditeur, le destinataire, le sujet et le corps du message
-            message.setFrom(new InternetAddress("noa.lallemand.testMail@gmail.com"));
+            message.setFrom(new InternetAddress(getUsernameExp()));
             //message.setFrom(new InternetAddress("maximerenardhepl@gmail.com"));
-            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(username));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(usernameDest));
 
             // Définissez le sujet et le contenu du message
             message.setSubject(subject);
@@ -164,8 +174,24 @@ public class control {
 
                     String expediteur = msg.getFrom()[0].toString();
                     String sujet = msg.getSubject();
+                    String head;
 
                     nouveauMsg = new MessageData();
+
+                    //for(int z=0 ; z <= totalMessages ; z++)
+                    //{
+                        Enumeration<Header> headers = msg.getAllHeaders();
+                        while (headers.hasMoreElements())
+                        {
+                            Header header = headers.nextElement();
+                            if (header.getName().equalsIgnoreCase("Received"))
+                            {
+                                String mta = "MTA : " + header.getValue();
+                                nouveauMsg.setHead(mta);
+                            }
+                        }
+                    //}
+
                     nouveauMsg.setSession(session);
                     nouveauMsg.setExpediteur(expediteur);
                     nouveauMsg.setSujet(sujet);
@@ -221,28 +247,8 @@ public class control {
     public synchronized void trouverMTA(JList list1) {
         DefaultListModel<String> listModel = new DefaultListModel<>();
 
-        String host = "smtp.gmail.com";
-        //String username = "maximerenardhepl@gmail.com";
-        //String password = "ztnjudjfqvapunwo";
-
-        String username = "noa.lallemand.testMail@gmail.com";
-        String password = "rvvoapvidjolgcmj";
-
-        Properties props = new Properties();
-        props.put("mail.store.protocol", "imaps");
-        props.put("mail.imaps.host", host);
-        props.put("mail.imaps.port", "993");
-
-        try {
-            Session session = Session.getInstance(props, null);
-            Store store = session.getStore();
-            store.connect(host, username, password);
-
-            Folder inbox = store.getFolder("INBOX");
-            inbox.open(Folder.READ_ONLY);
-
-            Message[] messages = inbox.getMessages();
-            int n=1;
+      try{
+          /*
             for (Message message : messages) {
                 String sujet = "N: " + n + "  Sujet : " + message.getSubject();
                 listModel. addElement(sujet);
@@ -257,14 +263,26 @@ public class control {
                 }
                 listModel.addElement("==================================================================================");
                 n++;
+            }*/
+
+            int n=1;
+            MessageData temp = new MessageData();
+            for(int i = 0 ; i < listMsg.size() ; i++, n++)
+            {
+                temp = listMsg.get(i);
+
+                String sujet = "N: " + n + "  Sujet : " + temp.getSujet();
+                listModel. addElement(sujet);
+
+                listModel.addElement(temp.getHead());
+                listModel.addElement("==================================================================================");
             }
 
-            inbox.close(false);
-            store.close();
-
-            // Mettez à jour la JList avec le modèle de liste
             list1.setModel(listModel);
-        } catch (Exception e) {
+
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
     }

@@ -9,6 +9,7 @@ public class MessageData {
     private String expediteur;
     private String sujet;
     private String contenu;
+    private String Head;
     private List<String> piecesJointes;
 
     public void setSession(Session s) {
@@ -27,10 +28,12 @@ public class MessageData {
         this.contenu = contenu;
     }
 
+    public String getHead() {return Head;}
+
+    public void setHead(String head) {Head = head;}
     public void setPiecesJointes(List<String> piecesJointes) {
         this.piecesJointes = piecesJointes;
     }
-
     public Session getSession() { return this.session; }
     public String getExpediteur() { return this.expediteur; }
     public String getSujet() { return this.sujet; }
