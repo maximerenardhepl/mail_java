@@ -8,6 +8,9 @@ import javax.activation.FileDataSource;
 import javax.mail.*;
 import javax.mail.internet.*;
 import javax.swing.*;
+import java.io.ByteArrayOutputStream;
+import java.io.FileOutputStream;
+import java.io.InputStream;
 import java.util.*;
 import javax.swing.JFileChooser;
 
@@ -178,19 +181,16 @@ public class control {
 
                     nouveauMsg = new MessageData();
 
-                    //for(int z=0 ; z <= totalMessages ; z++)
-                    //{
-                        Enumeration<Header> headers = msg.getAllHeaders();
-                        while (headers.hasMoreElements())
+                    Enumeration<Header> headers = msg.getAllHeaders();
+                    while (headers.hasMoreElements())
+                    {
+                        Header header = headers.nextElement();
+                        if (header.getName().equalsIgnoreCase("Received"))
                         {
-                            Header header = headers.nextElement();
-                            if (header.getName().equalsIgnoreCase("Received"))
-                            {
-                                String mta = "MTA : " + header.getValue();
-                                nouveauMsg.setHead(mta);
-                            }
+                            String mta = "MTA : " + header.getValue();
+                            nouveauMsg.setHead(mta);
                         }
-                    //}
+                    }
 
                     nouveauMsg.setSession(session);
                     nouveauMsg.setExpediteur(expediteur);
@@ -200,12 +200,48 @@ public class control {
                     System.out.println("Nouveau Message: \n" + "Expéditeur: " + nouveauMsg.getExpediteur() + "Sujet: " + nouveauMsg.getSujet());
 
                     if(msg.isMimeType("text/plain")) {
-                        System.out.println("Ce message est un simple message (text/plain)...");
+                        System.out.println("Ce message est un simple texte (text/plain)...");
 
                         nouveauMsg.setContenu((String) msg.getContent());
                     }
                     else if(msg.isMimeType("multipart/*")) {
+                        Multipart multipart = (Multipart) msg.getContent();
 
+                        StringBuilder textContent = new StringBuilder();
+                        List<String> listePiecesJointes = new ArrayList<>();
+
+                        System.out.println("Le multipart contient " + multipart.getCount() + " bodyparts");
+                        for (int i = 0; i < multipart.getCount(); i++) {
+                            BodyPart bodyPart = multipart.getBodyPart(i);
+
+                            String d = bodyPart.getDisposition();
+                            if (d != null && d.equalsIgnoreCase(Part.ATTACHMENT)) {
+                                System.out.println("Ce bodypart est une piece jointe!");
+                                String nomPieceJointe = bodyPart.getFileName();
+
+                                InputStream is = bodyPart.getInputStream();
+                                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+
+                                int bytes;
+                                while ((bytes = is.read()) != -1) {
+                                    baos.write(bytes);
+                                }
+                                baos.flush();
+
+                                FileOutputStream fos = new FileOutputStream(nomPieceJointe);
+                                baos.writeTo(fos);
+                                fos.close();
+
+                                listePiecesJointes.add(nomPieceJointe);
+                                System.out.println("Nom de la pièce jointe " + nomPieceJointe);
+
+                            } else if (bodyPart.isMimeType("text/plain")) {
+                                textContent.append((String) bodyPart.getContent());
+                            }
+                        }
+
+                        nouveauMsg.setContenu(textContent.toString());
+                        nouveauMsg.setPiecesJointes(listePiecesJointes);
                     }
 
                     listMsg.add(nouveauMsg);

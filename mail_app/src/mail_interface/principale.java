@@ -75,7 +75,7 @@ public class principale extends JFrame{
             String subject = msg.getSujet();
 
             model.addElement("N: " + n + "  De : " + sender + " - Sujet : " + subject);
-            model.addElement("=============================================================================================================");
+            //model.addElement("=============================================================================================================");
         }
 
         list1.setModel(model);
