@@ -32,6 +32,7 @@ public class control {
     private String usernameExp;
     private String password;
     public String piece_path="";
+    public String piece_filename;
     private ArrayList<MessageData> listMsg;
     private int nbrMessagesInBox;
 
@@ -97,7 +98,7 @@ public class control {
                 MimeBodyPart pieceJointe = new MimeBodyPart();
                 FileDataSource source = new FileDataSource(piece_path);
                 pieceJointe.setDataHandler(new DataHandler(source));
-                pieceJointe.setFileName(piece_path); // Nom de la pièce jointe dans l'e-mail
+                pieceJointe.setFileName(piece_filename); // Nom de la pièce jointe dans l'e-mail
 
                 // Créez un conteneur multipart pour le message
                 Multipart multipart = new MimeMultipart();
@@ -281,6 +282,8 @@ public class control {
         if (returnValue == JFileChooser.APPROVE_OPTION) {
             // Récupère le chemin d'accès au fichier sélectionné
             piece_path = fileChooser.getSelectedFile().getAbsolutePath();
+            piece_filename = fileChooser.getSelectedFile().getName();
+
             System.out.println("Chemin d'accès au fichier sélectionné : " + piece_path);
         } else {
             System.out.println("Aucun fichier sélectionné.");
