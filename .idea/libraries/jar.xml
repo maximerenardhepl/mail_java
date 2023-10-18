@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="jar">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/mail_app/jar/javax.mail.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mail_app/jar/flatlaf-3.2.1.jar!/" />
+      <root url="jar://$PROJECT_DIR$/mail_app/jar/javax.activation.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

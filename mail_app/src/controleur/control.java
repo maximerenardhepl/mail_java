@@ -97,11 +97,18 @@ public class control {
                 MimeBodyPart pieceJointe = new MimeBodyPart();
                 FileDataSource source = new FileDataSource(piece_path);
                 pieceJointe.setDataHandler(new DataHandler(source));
-                pieceJointe.setFileName("nom_de_la_piece_jointe.pdf"); // Nom de la pièce jointe dans l'e-mail
+                pieceJointe.setFileName(piece_path); // Nom de la pièce jointe dans l'e-mail
 
                 // Créez un conteneur multipart pour le message
                 Multipart multipart = new MimeMultipart();
+
+                MimeBodyPart txt = new MimeBodyPart();
+                txt.setText(text);
+
+
+                multipart.addBodyPart(txt);
                 multipart.addBodyPart(pieceJointe);
+
 
                 // Ajoutez le contenu au message
                 message.setContent(multipart);
