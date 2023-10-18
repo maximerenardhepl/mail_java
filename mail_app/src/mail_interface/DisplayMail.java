@@ -32,25 +32,27 @@ public class DisplayMail extends JFrame {
         txtFrom.setEditable(false);
         txtFrom.setText(mail.getExpediteur());
 
-        DefaultListModel<String> model = new DefaultListModel<>();
-        for(String nomPieceJointe : mail.getPiecesJointes()) {
-            model.addElement(nomPieceJointe);
-        }
+        if(mail.getPiecesJointes() != null) {
+            DefaultListModel<String> model = new DefaultListModel<>();
+            for(String nomPieceJointe : mail.getPiecesJointes()) {
+                model.addElement(nomPieceJointe);
+            }
 
-        listAttachments.setModel(model);
+            listAttachments.setModel(model);
 
-        listAttachments.addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseClicked(MouseEvent e) {
-                if (e.getClickCount() == 2) {
-                    int selectedIndex = listAttachments.getSelectedIndex();
-                    if (selectedIndex != -1) {
-                        String selectedFileName = (String)listAttachments.getModel().getElementAt(selectedIndex);
-                        openFile(selectedFileName);
+            listAttachments.addMouseListener(new MouseAdapter() {
+                @Override
+                public void mouseClicked(MouseEvent e) {
+                    if (e.getClickCount() == 2) {
+                        int selectedIndex = listAttachments.getSelectedIndex();
+                        if (selectedIndex != -1) {
+                            String selectedFileName = (String)listAttachments.getModel().getElementAt(selectedIndex);
+                            openFile(selectedFileName);
+                        }
                     }
                 }
-            }
-        });
+            });
+        }
     }
 
     private void openFile(String fileName) {
